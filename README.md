@@ -1,21 +1,45 @@
-# Robust Deep Learning Registration
+# RDLR: Robust Deep Learning–Based Retinal Image Registration
 
-> **A deep-learning toolkit for robust image registration, panoramic-view construction, and registration-data annotation.**
+> **A robust, deep learning–based framework for registration and panoramic reconstruction of pediatric retinal images.**
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
+[![Paper](https://img.shields.io/badge/Paper-JIIM%202024-0b6bcb)](https://doi.org/10.1007/s10278-024-01154-2)
 [![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-required-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
 
-This repository provides code for robust deep-learning-based image registration. It includes a learnable registration module, panoramic-view utilities, scripts for generating registration annotations, training and evaluation tools, and example image/video capture workflows.
+This repository is the official implementation of **RDLR**, introduced in *Journal of Imaging Informatics in Medicine* (2024). RDLR addresses the distortion, blur, limited overlap, and sparse features that make pediatric fundus-image registration difficult. It combines a robust **Registration Module (RM)** with a **Panoramic View Module (PVM)** to align image pairs and reconstruct wide-field retinal views.
+
+**Paper:** [RDLR: A Robust Deep Learning-Based Image Registration Method for Pediatric Retinal Images](https://doi.org/10.1007/s10278-024-01154-2)  
+Hao Zhou, Wenhan Yang, Limei Sun, *et al.* *Journal of Imaging Informatics in Medicine*, 37(6), 3131–3145, 2024.
 
 ## What is included
 
-- **Registration model** — estimate the geometric relationship between an image pair for alignment.
-- **Panoramic-view module** — compose aligned views into a wider field-of-view result.
-- **Annotation generation** — automated and tool-assisted scripts for creating registration supervision.
+- **Registration module (RM)** — integrates local and global feature information, orientation priors, grid estimation, and fast RANSAC to estimate robust affine alignment.
+- **Refinement module** — further improves pairwise alignment with reliable local-context information in a constrained search region.
+- **Panoramic-view module (PVM)** — recursively composes registered images into a wider retinal field of view.
+- **Automatic annotation framework** — creates large-scale registration supervision from a conventional registration pipeline and filters it with quality control.
 - **Training and evaluation** — entry points for model training, cross-modal evaluation, and metric calculation.
 - **Demos** — sample data plus image/video capture examples for testing the workflow.
 - **Pretrained weights** — three checkpoints trained with distinct supervision and feature settings.
+
+## RDLR at a glance
+
+```text
+Paired pediatric fundus images
+            ↓
+Registration Module (RM)
+  global + local features · orientation prior · fast RANSAC
+            ↓
+Optional local-context refinement
+            ↓
+Accurate pairwise affine registration
+            ↓
+Panoramic View Module (PVM)
+            ↓
+Panoramic retinal image
+```
+
+RDLR was trained using more than **280,000 pediatric fundus images** with automatically generated registration annotations and quality control. In the reported evaluation, RDLR achieved a mean Dice score of **0.948** for pairwise registration and **0.960** for panoramic reconstruction. These published results are protocol-specific; results may differ with data source, preprocessing, checkpoint, and evaluation split.
 
 ## Repository layout
 
@@ -154,6 +178,23 @@ Use the same preprocessing and coordinate convention during evaluation as during
 - evaluate each modality separately before drawing conclusions about cross-modal robustness;
 - report failed registrations rather than silently excluding them.
 
+## Citation
+
+If you use RDLR in your research, please cite the following paper:
+
+```bibtex
+@article{zhou2024rdlr,
+  title   = {RDLR: A Robust Deep Learning-Based Image Registration Method for Pediatric Retinal Images},
+  author  = {Zhou, Hao and Yang, Wenhan and Sun, Limei and Huang, Li and Li, Songshan and Luo, Xiaoling and Jin, Yili and Sun, Wei and Yan, Wenjia and Li, Jing and Ding, Xiaoyan and He, Yao and Xie, Zhi},
+  journal = {Journal of Imaging Informatics in Medicine},
+  volume  = {37},
+  number  = {6},
+  pages   = {3131--3145},
+  year    = {2024},
+  doi     = {10.1007/s10278-024-01154-2}
+}
+```
+
 ## Licence
 
 This project is released under the [GNU General Public License v3.0](LICENSE). Any redistribution or derivative work must comply with the terms of that licence.
@@ -161,5 +202,3 @@ This project is released under the [GNU General Public License v3.0](LICENSE). A
 ## Acknowledgements and contact
 
 Please use the [GitHub Issues page](https://github.com/wuwusky/RobustDeepLeraningRegistration/issues) for implementation questions, bug reports, and reproducibility discussions.
-
-If you use this project in academic work, please consult the repository owner for the preferred citation, as a citation record is not currently provided in the repository.
